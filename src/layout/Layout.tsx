@@ -1,32 +1,34 @@
-// Componente de diseño principal que incluye la barra de navegación y el contenedor para las rutas hijas.
-
-import { Button, Container, Nav, Navbar } from 'react-bootstrap'
-import { NavLink, Outlet, useNavigate } from 'react-router-dom'
+import { Button, Container, Dropdown, Nav, Navbar } from 'react-bootstrap'
+import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom'
+import { BoxArrowRight, Moon, Person, Sun } from 'react-bootstrap-icons'
+import Avatar from '../components/Avatar'
+import Logo from '../components/Logo'
 import { useAuth } from '../context/AuthContext'
+import { useTheme } from '../hooks/useTheme'
 
 export default function Layout() {
-
-    // Obtenemos el usuario y la función de cierre de sesión del contexto de autenticación
     const { user, logout } = useAuth()
+    const { theme, toggleTheme } = useTheme()
     const navigate = useNavigate()
 
-    // Función para manejar el cierre de sesión del usuario
     function handleLogout() {
         logout()
         navigate('/')
     }
 
-    // Renderizamos la barra de navegación y el contenedor para las rutas hijas
     return (
         <>
-            <Navbar bg="dark" variant="dark" expand="md">
+            <Navbar expand="md" className="app-navbar sticky-top" data-bs-theme={theme}>
                 <Container>
-                    <Navbar.Brand as={NavLink} to="/">
-                        Anti-Social Net
+                    <Navbar.Brand as={NavLink} to="/" className="d-flex align-items-center gap-2 fw-bold">
+                        <Logo size={36} />
+                        <span>Anti-Social Net</span>
                     </Navbar.Brand>
+
                     <Navbar.Toggle aria-controls="main-nav" />
+
                     <Navbar.Collapse id="main-nav">
-                        <Nav className="me-auto">
+                        <Nav className="me-auto ms-md-3 gap-md-1">
                             <Nav.Link as={NavLink} to="/" end>
                                 Inicio
                             </Nav.Link>
@@ -41,25 +43,46 @@ export default function Layout() {
                                 </>
                             )}
                         </Nav>
-                        <Nav className="align-items-md-center">
+
+                        <div className="d-flex align-items-center gap-2 mt-3 mt-md-0">
+                            <Button
+                                variant="link"
+                                className="icon-button"
+                                onClick={toggleTheme}
+                                aria-label={theme === 'dark' ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'}
+                            >
+                                {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
+                            </Button>
+
                             {user ? (
-                                <>
-                                    <Navbar.Text className="me-md-3">Hola, {user.nickName}</Navbar.Text>
-                                    <Button variant="outline-light" size="sm" onClick={handleLogout}>
-                                        Cerrar sesión
-                                    </Button>
-                                </>
+                                <Dropdown align="end">
+                                    <Dropdown.Toggle variant="link" className="user-toggle d-flex align-items-center gap-2">
+                                        <Avatar nickName={user.nickName} size={32} />
+                                        <span>{user.nickName}</span>
+                                    </Dropdown.Toggle>
+                                    <Dropdown.Menu>
+                                        <Dropdown.Item onClick={() => navigate('/perfil')}>
+                                            <Person className="me-2" />
+                                            Mi perfil
+                                        </Dropdown.Item>
+                                        <Dropdown.Divider />
+                                        <Dropdown.Item onClick={handleLogout}>
+                                            <BoxArrowRight className="me-2" />
+                                            Cerrar sesión
+                                        </Dropdown.Item>
+                                    </Dropdown.Menu>
+                                </Dropdown>
                             ) : (
                                 <>
-                                    <Nav.Link as={NavLink} to="/login">
+                                    <Link to="/login" className="btn btn-outline-primary btn-sm">
                                         Iniciar sesión
-                                    </Nav.Link>
-                                    <Nav.Link as={NavLink} to="/register">
+                                    </Link>
+                                    <Link to="/register" className="btn btn-primary btn-sm">
                                         Registrarse
-                                    </Nav.Link>
+                                    </Link>
                                 </>
                             )}
-                        </Nav>
+                        </div>
                     </Navbar.Collapse>
                 </Container>
             </Navbar>

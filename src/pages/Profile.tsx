@@ -31,7 +31,7 @@ export default function Profile() {
 
     return (
         <div>
-            <div className="d-flex justify-content-between align-items-start flex-wrap gap-3 p-4 mb-4 bg-light rounded-3">
+            <div className="d-flex justify-content-between align-items-start flex-wrap gap-3 p-4 mb-4 bg-body-tertiary rounded-3">
                 <div>
                     <h1 className="h3 mb-1">@{user.nickName}</h1>
                     <p className="text-muted mb-1">{user.email}</p>

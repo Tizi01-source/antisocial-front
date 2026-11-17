@@ -21,7 +21,7 @@ export default function Home() {
 
     return (
         <div>
-            <div className="p-4 mb-4 bg-light rounded-3">
+            <div className="p-4 mb-4 bg-body-tertiary rounded-3">
                 <h1 className="display-6">Anti-Social Net</h1>
                 <p className="mb-0">Compartí lo que pensás con la comunidad de UnaHur.</p>
             </div>
