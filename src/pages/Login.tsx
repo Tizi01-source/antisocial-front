@@ -1,33 +1,26 @@
-// Página de inicio de sesión que permite a los usuarios ingresar con su nickName y una contraseña fija.
-
 import { useState } from 'react'
 import type { FormEvent } from 'react'
 import { Alert, Button, Card, Form } from 'react-bootstrap'
 import { Link, Navigate, useNavigate } from 'react-router-dom'
 import { getUsers } from '../api/api'
+import Logo from '../components/Logo'
 import { useAuth } from '../context/AuthContext'
 
-// Contraseña fija para todos los usuarios (solo para fines de demostración)
 const FIXED_PASSWORD = '123456'
 
 export default function Login() {
-
-    //  Obtenemos el usuario y la función de inicio de sesión del contexto de autenticación
     const { user, login } = useAuth()
     const navigate = useNavigate()
 
-    // Estados para manejar el nickName, la contraseña, el error y el estado de carga
     const [nickName, setNickName] = useState<string>('')
     const [password, setPassword] = useState<string>('')
     const [error, setError] = useState<string | null>(null)
     const [loading, setLoading] = useState<boolean>(false)
 
-    // Si el usuario ya está autenticado, redirigimos a la página de inicio
     if (user) {
         return <Navigate to="/" replace />
     }
 
-    // Función para manejar el envío del formulario de inicio de sesión
     async function handleSubmit(e: FormEvent<HTMLFormElement>) {
         e.preventDefault()
         setError(null)
@@ -56,13 +49,14 @@ export default function Login() {
         }
     }
 
-    // Renderizamos el formulario de inicio de sesión con campos para el nickName y la contraseña, y mostramos mensajes de error si es necesario
     return (
-        <Card className="mx-auto" style={{ maxWidth: 420 }}>
-            <Card.Body>
-                <Card.Title as="h2" className="mb-3">
-                    Iniciar sesión
-                </Card.Title>
+        <Card className="auth-card mx-auto">
+            <Card.Body className="p-4">
+                <div className="text-center mb-4">
+                    <Logo size={56} />
+                    <h1 className="h3 mt-3 mb-1">Bienvenido de vuelta</h1>
+                    <p className="text-muted mb-0">Iniciá sesión para publicar y comentar</p>
+                </div>
 
                 {error && <Alert variant="danger">{error}</Alert>}
 
@@ -74,15 +68,17 @@ export default function Login() {
                             value={nickName}
                             onChange={(e) => setNickName(e.target.value)}
                             placeholder="luna"
+                            autoComplete="username"
                         />
                     </Form.Group>
 
-                    <Form.Group className="mb-3" controlId="loginPassword">
+                    <Form.Group className="mb-4" controlId="loginPassword">
                         <Form.Label>Contraseña</Form.Label>
                         <Form.Control
                             type="password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
+                            autoComplete="current-password"
                         />
                     </Form.Group>
 
@@ -91,7 +87,7 @@ export default function Login() {
                     </Button>
                 </Form>
 
-                <p className="mt-3 mb-0 text-center">
+                <p className="mt-4 mb-0 text-center">
                     ¿No tenés cuenta? <Link to="/register">Registrate</Link>
                 </p>
             </Card.Body>

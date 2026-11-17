@@ -3,8 +3,12 @@ import type { FormEvent } from 'react'
 import { Alert, Button, Card, Form, InputGroup } from 'react-bootstrap'
 import { Link, useNavigate } from 'react-router-dom'
 import { createPost, createPostImage, getTags } from '../api/api'
+import Avatar from '../components/Avatar'
+import SafeImage from '../components/SafeImage'
 import { useAuth } from '../context/AuthContext'
 import type { Tag } from '../types'
+
+const MAX_DESCRIPTION = 500
 
 function isValidUrl(value: string): boolean {
     try {
@@ -13,6 +17,24 @@ function isValidUrl(value: string): boolean {
     } catch {
         return false
     }
+}
+
+function ImagePreview({ url }: { url: string }) {
+    const [debouncedUrl, setDebouncedUrl] = useState<string>('')
+
+    useEffect(() => {
+        const timer = setTimeout(() => setDebouncedUrl(url.trim()), 600)
+        return () => clearTimeout(timer)
+    }, [url])
+
+    const current = url.trim()
+    if (!current || debouncedUrl !== current || !isValidUrl(current)) return null
+
+    return (
+        <div className="mt-2">
+            <SafeImage key={current} src={current} alt="Vista previa de la imagen" height={140} />
+        </div>
+    )
 }
 
 export default function CreatePost() {
@@ -49,6 +71,7 @@ export default function CreatePost() {
 
     function changeImageUrl(index: number, value: string) {
         setImageUrls((prev) => prev.map((url, i) => (i === index ? value : url)))
+        setImageErrors((prev) => prev.map((err, i) => (i === index ? null : err)))
     }
 
     function addImageField() {
@@ -112,11 +135,15 @@ export default function CreatePost() {
     }
 
     return (
-        <Card className="mx-auto" style={{ maxWidth: 640 }}>
-            <Card.Body>
-                <Card.Title as="h2" className="mb-3">
-                    Crear post
-                </Card.Title>
+        <Card className="form-card mx-auto">
+            <Card.Body className="p-4">
+                <div className="d-flex align-items-center gap-3 mb-4">
+                    <Avatar nickName={user.nickName} size={48} />
+                    <div>
+                        <h1 className="h4 mb-0">Crear post</h1>
+                        <small className="text-muted">Publicás como @{user.nickName}</small>
+                    </div>
+                </div>
 
                 {serverError && (
                     <Alert variant={postSaved ? 'warning' : 'danger'}>
@@ -131,68 +158,84 @@ export default function CreatePost() {
                 )}
 
                 <Form onSubmit={handleSubmit} noValidate>
-                    <Form.Group className="mb-3" controlId="postDescription">
-                        <Form.Label>Descripción</Form.Label>
+                    <Form.Group className="mb-4" controlId="postDescription">
+                        <Form.Label>¿Qué querés compartir?</Form.Label>
                         <Form.Control
                             as="textarea"
                             rows={4}
+                            maxLength={MAX_DESCRIPTION}
+                            placeholder="Escribí tu post..."
                             value={description}
-                            onChange={(e) => setDescription(e.target.value)}
+                            onChange={(e) => {
+                                setDescription(e.target.value)
+                                setDescriptionError(null)
+                            }}
                             isInvalid={!!descriptionError}
                         />
                         <Form.Control.Feedback type="invalid">
                             {descriptionError}
                         </Form.Control.Feedback>
+                        <div className="text-end small text-muted mt-1">
+                            {description.length}/{MAX_DESCRIPTION}
+                        </div>
                     </Form.Group>
 
-                    <Form.Group className="mb-3">
+                    <Form.Group className="mb-4">
                         <Form.Label>Tags</Form.Label>
                         {tagsError && <Alert variant="warning">No se pudieron cargar los tags: {tagsError}</Alert>}
-                        <div>
+                        <div className="d-flex flex-wrap gap-2" role="group" aria-label="Elegir tags">
                             {tags.map((tag) => (
-                                <Form.Check
+                                <button
                                     key={tag.id}
-                                    inline
-                                    type="checkbox"
-                                    id={`tag-${tag.id}`}
-                                    label={`#${tag.name}`}
-                                    checked={selectedTagIds.includes(tag.id)}
-                                    onChange={() => toggleTag(tag.id)}
-                                />
+                                    type="button"
+                                    className={`tag-chip ${selectedTagIds.includes(tag.id) ? 'active' : ''}`}
+                                    aria-pressed={selectedTagIds.includes(tag.id)}
+                                    onClick={() => toggleTag(tag.id)}
+                                >
+                                    #{tag.name}
+                                </button>
                             ))}
                         </div>
                     </Form.Group>
 
-                    <Form.Group className="mb-3">
+                    <Form.Group className="mb-4">
                         <Form.Label>Imágenes (opcional)</Form.Label>
                         {imageUrls.map((url, index) => (
-                            <InputGroup key={index} className="mb-2" hasValidation>
-                                <Form.Control
-                                    type="text"
-                                    placeholder="https://ejemplo.com/imagen.jpg"
-                                    value={url}
-                                    onChange={(e) => changeImageUrl(index, e.target.value)}
-                                    isInvalid={!!imageErrors[index]}
-                                    aria-label={`URL de la imagen ${index + 1}`}
-                                />
-                                {imageUrls.length > 1 && (
-                                    <Button variant="outline-danger" onClick={() => removeImageField(index)}>
-                                        Quitar
-                                    </Button>
-                                )}
-                                <Form.Control.Feedback type="invalid">
-                                    {imageErrors[index]}
-                                </Form.Control.Feedback>
-                            </InputGroup>
+                            <div key={index} className="mb-3">
+                                <InputGroup hasValidation>
+                                    <Form.Control
+                                        type="text"
+                                        placeholder="https://ejemplo.com/imagen.jpg"
+                                        value={url}
+                                        onChange={(e) => changeImageUrl(index, e.target.value)}
+                                        isInvalid={!!imageErrors[index]}
+                                        aria-label={`URL de la imagen ${index + 1}`}
+                                    />
+                                    {imageUrls.length > 1 && (
+                                        <Button variant="outline-danger" onClick={() => removeImageField(index)}>
+                                            Quitar
+                                        </Button>
+                                    )}
+                                    <Form.Control.Feedback type="invalid">
+                                        {imageErrors[index]}
+                                    </Form.Control.Feedback>
+                                </InputGroup>
+                                <ImagePreview url={url} />
+                            </div>
                         ))}
                         <Button variant="outline-secondary" size="sm" onClick={addImageField}>
                             + Agregar otra imagen
                         </Button>
                     </Form.Group>
 
-                    <Button type="submit" disabled={sending || postSaved}>
-                        {sending ? 'Publicando...' : 'Publicar'}
-                    </Button>
+                    <div className="d-flex justify-content-end gap-2">
+                        <Link to="/" className="btn btn-outline-secondary">
+                            Cancelar
+                        </Link>
+                        <Button type="submit" disabled={sending || postSaved}>
+                            {sending ? 'Publicando...' : 'Publicar'}
+                        </Button>
+                    </div>
                 </Form>
             </Card.Body>
         </Card>

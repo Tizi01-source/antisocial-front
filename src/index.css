@@ -7,6 +7,7 @@
     --on-brand: #ffffff;
     --accent: #0081a0;
     --accent-rgb: 0, 129, 160;
+    --accent-text: #00697f;
 
     --logo-green: #58a32f;
     --logo-cyan: #03a1c6;
@@ -35,6 +36,7 @@
     --on-brand: #0e1013;
     --accent: #3cc4e6;
     --accent-rgb: 60, 196, 230;
+    --accent-text: #3cc4e6;
 
     --logo-green: #7bc454;
     --logo-cyan: #3cc4e6;
@@ -215,4 +217,75 @@
     background: var(--brand);
     border-color: var(--brand);
     color: var(--on-brand);
+}
+
+/* ===== Posts y comentarios ===== */
+.post-card {
+    transition: border-color 0.15s;
+}
+
+.post-card:hover {
+    border-color: rgba(var(--brand-rgb), 0.5);
+}
+
+.post-text {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+.post-images {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 0.5rem;
+}
+
+.post-image {
+    display: block;
+    width: 100%;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+.image-fallback {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    width: 100%;
+    border-radius: 10px;
+    background: var(--bs-tertiary-bg);
+    color: var(--bs-secondary-color);
+    font-size: 0.85rem;
+}
+
+.tag-pill {
+    display: inline-block;
+    padding: 0.15rem 0.65rem;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    background: rgba(var(--accent-rgb), 0.14);
+    color: var(--accent-text);
+}
+
+.comment-body {
+    flex: 1;
+    min-width: 0;
+    padding: 0.55rem 0.85rem;
+    border-radius: 12px;
+    background: var(--bs-tertiary-bg);
+}
+
+/* ===== Anchos de páginas con formulario ===== */
+.auth-card {
+    max-width: 420px;
+}
+
+.form-card {
+    max-width: 640px;
+}
+
+.detail-wrapper {
+    max-width: 720px;
 }

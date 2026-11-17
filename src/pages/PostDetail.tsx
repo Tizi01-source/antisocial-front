@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react'
-import { Alert, Badge, Card, Spinner } from 'react-bootstrap'
+import { Alert, Card, Spinner } from 'react-bootstrap'
 import { Link, useParams } from 'react-router-dom'
 import { getCommentsByPost, getImagesByPost, getPost } from '../api/api'
+import Avatar from '../components/Avatar'
 import CommentForm from '../components/CommentForm'
+import SafeImage from '../components/SafeImage'
 import type { Post, PostComment, PostImage } from '../types'
 
 type Params = {
@@ -50,40 +52,47 @@ export default function PostDetail() {
     }
 
     return (
-        <div>
+        <div className="detail-wrapper mx-auto">
             <Link to="/" className="d-inline-block mb-3">
                 ← Volver al inicio
             </Link>
 
-            <Card className="mb-4 shadow-sm">
+            <Card className="mb-4">
                 <Card.Body>
-                    <Card.Subtitle className="mb-2 text-muted">
-                        @{post.User.nickName} · {new Date(post.createdAt).toLocaleDateString('es-AR')}
-                    </Card.Subtitle>
+                    <div className="d-flex align-items-center gap-2 mb-3">
+                        <Avatar nickName={post.User.nickName} size={44} />
+                        <div className="lh-sm">
+                            <div className="fw-semibold">@{post.User.nickName}</div>
+                            <small className="text-muted">
+                                {new Date(post.createdAt).toLocaleDateString('es-AR')}
+                            </small>
+                        </div>
+                    </div>
 
-                    <Card.Text>{post.description}</Card.Text>
+                    <p className="post-text mb-3">{post.description}</p>
 
                     {images.length > 0 && (
-                        <div className="d-flex flex-wrap gap-2 mb-3">
+                        <div className="post-images mb-3">
                             {images.map((img) => (
-                                <img
+                                <SafeImage
                                     key={img.id}
                                     src={img.url}
                                     alt={`Imagen del post ${post.id}`}
-                                    className="rounded"
-                                    style={{ maxHeight: 300, maxWidth: '100%' }}
+                                    height={300}
                                 />
                             ))}
                         </div>
                     )}
 
-                    <div>
-                        {post.Tags.map((tag) => (
-                            <Badge key={tag.id} bg="secondary" className="me-1">
-                                #{tag.name}
-                            </Badge>
-                        ))}
-                    </div>
+                    {post.Tags.length > 0 && (
+                        <div className="d-flex flex-wrap gap-2">
+                            {post.Tags.map((tag) => (
+                                <span key={tag.id} className="tag-pill">
+                  #{tag.name}
+                </span>
+                            ))}
+                        </div>
+                    )}
                 </Card.Body>
             </Card>
 
@@ -96,18 +105,22 @@ export default function PostDetail() {
             )}
 
             {comments.map((comment) => (
-                <Card key={comment.id} className="mb-2">
-                    <Card.Body className="py-2">
-                        <Card.Subtitle className="mb-1 text-muted small">
-                            @{comment.User.nickName} ·{' '}
-                            {new Date(comment.createdAt).toLocaleString('es-AR', {
-                                dateStyle: 'short',
-                                timeStyle: 'short',
-                            })}
-                        </Card.Subtitle>
-                        <Card.Text>{comment.content}</Card.Text>
-                    </Card.Body>
-                </Card>
+                <div key={comment.id} className="d-flex gap-2 mb-3">
+                    <Avatar nickName={comment.User.nickName} size={36} />
+                    <div className="comment-body">
+                        <div className="small mb-1">
+                            <strong>@{comment.User.nickName}</strong>{' '}
+                            <span className="text-muted">
+                ·{' '}
+                                {new Date(comment.createdAt).toLocaleString('es-AR', {
+                                    dateStyle: 'short',
+                                    timeStyle: 'short',
+                                })}
+              </span>
+                        </div>
+                        <div className="post-text">{comment.content}</div>
+                    </div>
+                </div>
             ))}
         </div>
     )
