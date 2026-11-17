@@ -124,6 +124,12 @@
     background: rgba(var(--brand-rgb), 0.12);
 }
 
+@media (max-width: 767.98px) {
+    .app-navbar .navbar-collapse {
+        padding: 0.75rem 0 0.25rem;
+    }
+}
+
 .icon-button,
 .user-toggle {
     color: var(--bs-body-color) !important;

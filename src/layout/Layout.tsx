@@ -28,19 +28,14 @@ export default function Layout() {
                     <Navbar.Toggle aria-controls="main-nav" />
 
                     <Navbar.Collapse id="main-nav">
-                        <Nav className="me-auto ms-md-3 gap-md-1">
+                        <Nav className="me-auto ms-md-3 gap-1">
                             <Nav.Link as={NavLink} to="/" end>
                                 Inicio
                             </Nav.Link>
                             {user && (
-                                <>
-                                    <Nav.Link as={NavLink} to="/crear-post">
-                                        Crear post
-                                    </Nav.Link>
-                                    <Nav.Link as={NavLink} to="/perfil">
-                                        Mi perfil
-                                    </Nav.Link>
-                                </>
+                                <Nav.Link as={NavLink} to="/crear-post">
+                                    Crear post
+                                </Nav.Link>
                             )}
                         </Nav>
 
