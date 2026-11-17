@@ -1,14 +1,8 @@
+import { hueFromText } from '../utils/color'
+
 type AvatarProps = {
     nickName: string
     size?: number
-}
-
-function hueFromText(text: string): number {
-    let hash = 0
-    for (const char of text) {
-        hash = (hash * 31 + char.charCodeAt(0)) % 360
-    }
-    return hash
 }
 
 export default function Avatar({ nickName, size = 40 }: AvatarProps) {

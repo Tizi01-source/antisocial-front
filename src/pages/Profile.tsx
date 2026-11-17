@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react'
-import { Alert, Button, Spinner } from 'react-bootstrap'
+import { Alert, Button, Card, Spinner } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
 import { getPostsByUser } from '../api/api'
+import Avatar from '../components/Avatar'
 import PostCard from '../components/PostCard'
 import { useAuth } from '../context/AuthContext'
 import type { Post } from '../types'
+import { hueFromText } from '../utils/color'
 import { sortByNewest } from '../utils/posts'
 
 export default function Profile() {
@@ -29,22 +31,40 @@ export default function Profile() {
 
     if (!user) return null
 
+    const hue = hueFromText(user.nickName)
+    const bannerBackground = `linear-gradient(135deg, hsl(${hue} 50% 40%), hsl(${(hue + 50) % 360} 55% 30%))`
+    const memberSince = new Date(user.createdAt).toLocaleDateString('es-AR', {
+        month: 'long',
+        year: 'numeric',
+    })
+
     return (
-        <div>
-            <div className="d-flex justify-content-between align-items-start flex-wrap gap-3 p-4 mb-4 bg-body-tertiary rounded-3">
-                <div>
-                    <h1 className="h3 mb-1">@{user.nickName}</h1>
-                    <p className="text-muted mb-1">{user.email}</p>
-                    {!loading && !error && (
-                        <p className="mb-0">
-                            {posts.length} {posts.length === 1 ? 'post publicado' : 'posts publicados'}
-                        </p>
-                    )}
-                </div>
-                <Button variant="outline-danger" onClick={logout}>
-                    Cerrar sesión
-                </Button>
-            </div>
+        <div className="profile-wrapper mx-auto">
+            <Card className="profile-card mb-4">
+                <div className="profile-banner" style={{ background: bannerBackground }} />
+
+                <Card.Body className="pt-0">
+                    <div className="d-flex justify-content-between align-items-end flex-wrap gap-2">
+                        <div className="profile-avatar">
+                            <Avatar nickName={user.nickName} size={96} />
+                        </div>
+                        <Button variant="outline-danger" size="sm" onClick={logout}>
+                            Cerrar sesión
+                        </Button>
+                    </div>
+
+                    <h1 className="h3 mt-3 mb-0">@{user.nickName}</h1>
+                    <p className="text-muted mb-3 text-break">{user.email}</p>
+
+                    <div className="d-flex flex-wrap column-gap-4 row-gap-1">
+                        <div>
+                            <strong>{loading || error ? '–' : posts.length}</strong>{' '}
+                            <span className="text-muted">{posts.length === 1 ? 'post' : 'posts'}</span>
+                        </div>
+                        <div className="text-muted">Miembro desde {memberSince}</div>
+                    </div>
+                </Card.Body>
+            </Card>
 
             <h2 className="h4 mb-3">Mis posts</h2>
 

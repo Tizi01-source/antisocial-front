@@ -289,3 +289,24 @@
 .detail-wrapper {
     max-width: 720px;
 }
+
+/* ===== Perfil ===== */
+.profile-wrapper {
+    max-width: 720px;
+}
+
+.profile-card {
+    overflow: hidden;
+}
+
+.profile-banner {
+    height: 140px;
+}
+
+.profile-avatar {
+    display: inline-flex;
+    margin-top: -48px;
+    border: 4px solid var(--surface);
+    border-radius: 50%;
+    background: var(--surface);
+}
