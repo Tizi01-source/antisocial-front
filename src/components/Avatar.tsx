@@ -1,4 +1,6 @@
-import { hueFromText } from '../utils/color'
+// Componente Avatar que muestra la inicial del nombre de usuario con un color de fondo basado en el nombre.
+
+import { colorForName } from '../utils/color'
 
 type AvatarProps = {
     nickName: string
@@ -14,7 +16,7 @@ export default function Avatar({ nickName, size = 40 }: AvatarProps) {
                 width: size,
                 height: size,
                 fontSize: size * 0.42,
-                background: `hsl(${hueFromText(nickName)} 45% 36%)`,
+                background: colorForName(nickName),
             }}
         >
       {nickName.charAt(0).toUpperCase()}

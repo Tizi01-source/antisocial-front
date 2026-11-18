@@ -30,7 +30,7 @@ function sendJson<T>(path: string, body: object): Promise<T> {
     })
 }
 
-
+// =================================================================================================
 // Funciones para interactuar con los usuarios.
 export function getUsers() {
     return request<User[]>('/users')
@@ -41,7 +41,7 @@ export function createUser(nickName: string, email: string) {
 }
 
 
-
+// =================================================================================================
 // Funciones para interactuar con las publicaciones.
 export function getPosts() {
     return request<Post[]>('/posts')
@@ -60,14 +60,14 @@ export function createPost(description: string, userId: number, tagIds: number[]
 }
 
 
-
+// =================================================================================================
 // Funciones para interactuar con las etiquetas.
 export function getTags() {
     return request<Tag[]>('/tags')
 }
 
 
-
+// =================================================================================================
 // Funciones para interactuar con los comentarios.
 export function getCommentsByPost(postId: number | string) {
     return request<PostComment[]>(`/comments/post/${postId}`)
@@ -78,7 +78,7 @@ export function createComment(content: string, userId: number, postId: number) {
 }
 
 
-
+// =================================================================================================
 // Funciones para interactuar con las imágenes de publicaciones.
 export function getImagesByPost(postId: number | string) {
     return request<PostImage[]>(`/postimages/post/${postId}`)

@@ -50,6 +50,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 }
 
 // Hook personalizado para acceder al contexto de autenticación
+// eslint-disable-next-line react-refresh/only-export-components
 export function useAuth() {
     const context = useContext(AuthContext)
     if (!context) {

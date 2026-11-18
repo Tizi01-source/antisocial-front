@@ -1,3 +1,5 @@
+// Funcion para ordenar los posts de más recientes a más antiguos.
+
 import type { Post } from '../types'
 
 export function sortByNewest(posts: Post[]): Post[] {
